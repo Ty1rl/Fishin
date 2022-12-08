@@ -1,0 +1,123 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://addons/Rope3D/Rope3D.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/FishingPole.gd" type="Script" id=2]
+[ext_resource path="res://Shaders/wobble.shader" type="Shader" id=3]
+
+[sub_resource type="CylinderMesh" id=1]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 4.0
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 3 )
+shader_param/albedo = Color( 0.341176, 0.341176, 0.341176, 1 )
+shader_param/clamp_diffuse_to_max = false
+shader_param/cuts = 1
+shader_param/wrap = 0.0
+shader_param/steepness = 1.0
+shader_param/use_attenuation = true
+shader_param/use_specular = false
+shader_param/specular_strength = 1.0
+shader_param/specular_shininess = 16.0
+shader_param/use_rim = false
+shader_param/rim_width = 8.0
+shader_param/rim_color = Color( 1, 1, 1, 1 )
+shader_param/use_ramp = false
+shader_param/use_borders = false
+shader_param/border_width = 0.01
+shader_param/amount = 0.02
+shader_param/speed = 2.0
+shader_param/frequency = 2.0
+
+[sub_resource type="SphereShape" id=2]
+radius = 0.1
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = ExtResource( 3 )
+shader_param/albedo = Color( 0, 0, 0, 1 )
+shader_param/clamp_diffuse_to_max = false
+shader_param/cuts = 1
+shader_param/wrap = 0.0
+shader_param/steepness = 1.0
+shader_param/use_attenuation = true
+shader_param/use_specular = false
+shader_param/specular_strength = 1.0
+shader_param/specular_shininess = 16.0
+shader_param/use_rim = false
+shader_param/rim_width = 8.0
+shader_param/rim_color = Color( 1, 1, 1, 1 )
+shader_param/use_ramp = false
+shader_param/use_borders = false
+shader_param/border_width = 0.01
+shader_param/amount = 0.02
+shader_param/speed = 2.0
+shader_param/frequency = 2.0
+
+[sub_resource type="SphereShape" id=3]
+margin = 0.1
+radius = 0.1
+
+[sub_resource type="SphereMesh" id=6]
+radius = 0.05
+height = 0.1
+radial_segments = 4
+rings = 1
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = ExtResource( 3 )
+shader_param/albedo = Color( 1, 1, 1, 1 )
+shader_param/clamp_diffuse_to_max = false
+shader_param/cuts = 1
+shader_param/wrap = 0.0
+shader_param/steepness = 1.0
+shader_param/use_attenuation = true
+shader_param/use_specular = false
+shader_param/specular_strength = 1.0
+shader_param/specular_shininess = 16.0
+shader_param/use_rim = false
+shader_param/rim_width = 8.0
+shader_param/rim_color = Color( 1, 1, 1, 1 )
+shader_param/use_ramp = false
+shader_param/use_borders = false
+shader_param/border_width = 0.01
+shader_param/amount = 0.02
+shader_param/speed = 2.0
+shader_param/frequency = 2.0
+
+[node name="FishingPole" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 4 )
+
+[node name="StaticBody" type="StaticBody" parent="MeshInstance"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="MeshInstance/StaticBody"]
+shape = SubResource( 2 )
+
+[node name="Rope3D" type="Spatial" parent="MeshInstance/StaticBody"]
+script = ExtResource( 1 )
+width = 0.02
+segment_length = 0.5
+material = SubResource( 5 )
+attached_to = NodePath("../../../Hook")
+
+[node name="Hook" type="RigidBody" parent="." groups=["Hook"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.5, 0 )
+continuous_cd = true
+contacts_reported = 4
+contact_monitor = true
+linear_damp = 2.0
+
+[node name="CollisionShape" type="CollisionShape" parent="Hook"]
+shape = SubResource( 3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Hook"]
+mesh = SubResource( 6 )
+material/0 = SubResource( 7 )
+
+[connection signal="body_entered" from="Hook" to="." method="_on_Hook_body_entered"]
